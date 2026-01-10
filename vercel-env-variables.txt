@@ -13,7 +13,8 @@ SUPABASE_URL=https://hpneyyqvuttbznzyprio.supabase.co
 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhwbmV5eXF2dXR0YnpuenlwcmlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4OTMxODIsImV4cCI6MjA4MzQ2OTE4Mn0.V8wbp1A34JuSQP5KLIFpZkonutAWXRU-xvJuo_hV6Cg
 
 # Supabase Service Role Key (Opsional - untuk server-side operations)
-# Jika belum punya, bisa dikosongkan dulu atau ambil dari Supabase Dashboard > Settings > API > service_role key
+# TIDAK WAJIB untuk aplikasi ini karena semua API routes menggunakan anon key
+# Bisa dikosongkan atau diisi jika diperlukan untuk operasi admin di masa depan
 SUPABASE_SERVICE_KEY=
 
 # ============================================
