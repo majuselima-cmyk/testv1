@@ -29,6 +29,16 @@ export default defineEventHandler(async (event) => {
   const supabaseUrl = config.public.supabaseUrl
   const supabaseAnonKey = config.public.supabaseAnonKey
   
+  // Debug: Log configuration status (will be visible in Vercel function logs)
+  console.log('Supabase Config Check:', {
+    hasUrl: !!supabaseUrl,
+    urlLength: supabaseUrl?.length || 0,
+    hasKey: !!supabaseAnonKey,
+    keyLength: supabaseAnonKey?.length || 0,
+    urlPreview: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'missing',
+    keyPreview: supabaseAnonKey ? supabaseAnonKey.substring(0, 20) + '...' : 'missing'
+  })
+  
   // Check configuration dengan error message yang lebih jelas
   if (!supabaseUrl || !supabaseAnonKey) {
     const missingVars = []
@@ -37,7 +47,7 @@ export default defineEventHandler(async (event) => {
     
     throw createError({
       statusCode: 500,
-      statusMessage: `Missing Supabase environment variables: ${missingVars.join(', ')}. Please set them in Vercel Dashboard > Settings > Environment Variables`
+      statusMessage: `Missing Supabase environment variables: ${missingVars.join(', ')}. Please check: 1) Variables are set in Vercel Dashboard > Settings > Environment Variables 2) You have REDEPLOYED after setting variables 3) Variables are enabled for Production environment`
     })
   }
 
