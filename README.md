@@ -82,9 +82,43 @@ Buka [http://localhost:3000](http://localhost:3000) di browser kamu.
 └── supabase-migration.sql  # Database migration
 ```
 
+## Deployment ke Vercel
+
+### 1. Push ke GitHub
+Pastikan semua kode sudah di-push ke repository GitHub kamu.
+
+### 2. Deploy di Vercel
+1. Masuk ke [Vercel Dashboard](https://vercel.com)
+2. Klik **"New Project"**
+3. Import repository GitHub kamu (`testv1`)
+4. Vercel akan otomatis detect Nuxt.js dan mengatur konfigurasi
+
+### 3. Setup Environment Variables
+**PENTING:** Set environment variables di Vercel Dashboard:
+- Buka **Settings > Environment Variables** di project Vercel
+- Tambahkan variables berikut:
+  ```
+  SUPABASE_URL=https://your-project.supabase.co
+  SUPABASE_ANON_KEY=your_anon_key_here
+  SUPABASE_SERVICE_KEY=your_service_key_here
+  API_TOKEN=abc321Xyz
+  DEFAULT_ACCOUNT=263264939
+  ```
+
+### 4. Deploy
+- Vercel akan otomatis build dan deploy
+- Setelah deploy selesai, aplikasi akan live di URL yang diberikan Vercel
+
+### Catatan Deployment
+- ✅ Build sudah ditest dan berhasil
+- ✅ Vercel otomatis detect Nuxt.js 3
+- ✅ Server API routes akan berjalan sebagai serverless functions
+- ⚠️ **WAJIB** set environment variables sebelum deploy pertama kali
+- ⚠️ Pastikan Supabase database sudah setup dan tables sudah dibuat
+
 ## Notes
 
 - Pastikan semua tables sudah dibuat di Supabase sebelum menjalankan aplikasi
-- Default account bisa diubah di `.env` file
+- Default account bisa diubah di `.env` file atau environment variables di Vercel
 - API token untuk keamanan API endpoints
 
