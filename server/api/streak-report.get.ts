@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const config = useRuntimeConfig()
   
-  const account = (query.account as string) || config.defaultAccount || '263264939'
+  const account = (query.account as string) || config.defaultAccount || '270787386'
   const filterDate = (query.date as string) || new Date().toISOString().split('T')[0]
   const minStreak = 1
   const maxStreak = 15

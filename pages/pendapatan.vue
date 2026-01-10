@@ -124,7 +124,7 @@ let ChartJS: any = null
 
 const route = useRoute()
 const config = useRuntimeConfig()
-const defaultAccount = ref((route.query.account as string) || config.defaultAccount || '263264939')
+const defaultAccount = ref((route.query.account as string) || config.defaultAccount || '270787386')
 const days = ref(parseInt(route.query.days as string) || 30)
 const loading = ref(false)
 const lastUpdate = ref('-')

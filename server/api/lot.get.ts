@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const account = (query.account as string) || config.defaultAccount || '263264939'
+  const account = (query.account as string) || config.defaultAccount || '270787386'
   const schedule = (query.schedule as string) || 'S1'
   const format = (query.format as string) || 'standard'
 

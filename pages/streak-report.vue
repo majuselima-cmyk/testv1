@@ -196,7 +196,7 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
-const account = ref(config.defaultAccount || '263264939')
+const account = ref(config.defaultAccount || '270787386')
 const filterDate = ref(new Date().toISOString().split('T')[0])
 const minStreak = 1
 const maxStreak = 15

@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     // Private keys (server-side only)
     supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY || '',
     apiToken: process.env.API_TOKEN || 'abc321Xyz',
-    defaultAccount: process.env.DEFAULT_ACCOUNT || '263264939',
+    defaultAccount: process.env.DEFAULT_ACCOUNT || '270787386',
     
     // Public keys (exposed to client)
     public: {

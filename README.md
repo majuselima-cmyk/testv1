@@ -28,7 +28,7 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your_anon_key_here
 SUPABASE_SERVICE_KEY=your_service_key_here
 API_TOKEN=abc321Xyz
-DEFAULT_ACCOUNT=263264939
+DEFAULT_ACCOUNT=270787386
 ```
 
 Ambil credentials dari Settings > API di Supabase Dashboard.
@@ -102,7 +102,7 @@ Pastikan semua kode sudah di-push ke repository GitHub kamu.
   SUPABASE_ANON_KEY=your_anon_key_here
   SUPABASE_SERVICE_KEY=your_service_key_here
   API_TOKEN=abc321Xyz
-  DEFAULT_ACCOUNT=263264939
+  DEFAULT_ACCOUNT=270787386
   ```
 
 ### 4. Deploy
