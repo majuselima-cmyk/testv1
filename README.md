@@ -94,20 +94,73 @@ Pastikan semua kode sudah di-push ke repository GitHub kamu.
 4. Vercel akan otomatis detect Nuxt.js dan mengatur konfigurasi
 
 ### 3. Setup Environment Variables
-**PENTING:** Set environment variables di Vercel Dashboard:
-- Buka **Settings > Environment Variables** di project Vercel
-- Tambahkan variables berikut:
-  ```
-  SUPABASE_URL=https://your-project.supabase.co
-  SUPABASE_ANON_KEY=your_anon_key_here
-  SUPABASE_SERVICE_KEY=your_service_key_here
-  API_TOKEN=abc321Xyz
-  DEFAULT_ACCOUNT=270787386
-  ```
+**PENTING:** Set environment variables di Vercel Dashboard **SEBELUM** deploy pertama kali!
+
+**Cara Set Environment Variables di Vercel:**
+1. Buka project di [Vercel Dashboard](https://vercel.com)
+2. Klik **Settings** (di menu atas)
+3. Klik **Environment Variables** (di sidebar kiri)
+4. Tambahkan variables berikut satu per satu:
+   
+   | Name | Value | Environment |
+   |------|-------|-------------|
+   | `SUPABASE_URL` | `https://your-project.supabase.co` | Production, Preview, Development |
+   | `SUPABASE_ANON_KEY` | `your_anon_key_here` | Production, Preview, Development |
+   | `SUPABASE_SERVICE_KEY` | `your_service_key_here` | Production, Preview, Development |
+   | `API_TOKEN` | `abc321Xyz` | Production, Preview, Development (opsional) |
+   | `DEFAULT_ACCOUNT` | `270787386` | Production, Preview, Development (opsional) |
+
+5. **WAJIB:** Centang semua environment (Production, Preview, Development)
+6. Klik **Save** untuk setiap variable
+7. **Setelah semua variables di-set**, redeploy project:
+   - Klik tab **Deployments**
+   - Klik **...** (three dots) pada deployment terbaru
+   - Klik **Redeploy**
+
+**Catatan:** Environment variables dari Supabase bisa didapatkan di Supabase Dashboard → Settings → API
 
 ### 4. Deploy
 - Vercel akan otomatis build dan deploy
 - Setelah deploy selesai, aplikasi akan live di URL yang diberikan Vercel
+
+### 5. Troubleshooting Error 500
+
+Jika dashboard menampilkan "Loading..." atau error 500 pada `/api/control`, kemungkinan penyebab:
+
+#### A. Environment Variables Belum Di-set
+**Gejala:** Error 500 dengan message "Missing Supabase environment variables"
+
+**Solusi:**
+1. Buka Vercel Dashboard → Project → Settings → Environment Variables
+2. Pastikan sudah ada:
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_KEY` (opsional)
+3. Centang semua environment (Production, Preview, Development)
+4. Redeploy project
+
+#### B. Database Tables Belum Dibuat
+**Gejala:** Error 500 dengan message "Table 'ea_control' does not exist"
+
+**Solusi:**
+1. Buka Supabase Dashboard → SQL Editor
+2. Jalankan file `supabase-migration.sql` untuk membuat semua tables:
+   - `ea_control`
+   - `trading_positions`
+   - `lot_sizes`
+3. Refresh dashboard setelah tables dibuat
+
+#### C. Cek Log Error di Vercel
+1. Buka Vercel Dashboard → Project → Deployments
+2. Klik deployment terbaru
+3. Klik tab "Functions" → pilih `/api/control`
+4. Lihat error log untuk detail error
+
+#### D. Verifikasi Supabase Connection
+1. Buka Supabase Dashboard → Settings → API
+2. Copy `URL` dan `anon public` key
+3. Pastikan sama dengan yang di-set di Vercel Environment Variables
+4. Test connection dengan SQL Editor
 
 ### Catatan Deployment
 - ✅ Build sudah ditest dan berhasil
@@ -115,6 +168,7 @@ Pastikan semua kode sudah di-push ke repository GitHub kamu.
 - ✅ Server API routes akan berjalan sebagai serverless functions
 - ⚠️ **WAJIB** set environment variables sebelum deploy pertama kali
 - ⚠️ Pastikan Supabase database sudah setup dan tables sudah dibuat
+- ✅ Error handling sudah diperbaiki untuk memberikan error message yang lebih jelas
 
 ## Notes
 

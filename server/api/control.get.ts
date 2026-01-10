@@ -29,10 +29,15 @@ export default defineEventHandler(async (event) => {
   const supabaseUrl = config.public.supabaseUrl
   const supabaseAnonKey = config.public.supabaseAnonKey
   
+  // Check configuration dengan error message yang lebih jelas
   if (!supabaseUrl || !supabaseAnonKey) {
+    const missingVars = []
+    if (!supabaseUrl) missingVars.push('SUPABASE_URL')
+    if (!supabaseAnonKey) missingVars.push('SUPABASE_ANON_KEY')
+    
     throw createError({
       statusCode: 500,
-      message: 'Missing Supabase configuration'
+      statusMessage: `Missing Supabase environment variables: ${missingVars.join(', ')}. Please set them in Vercel Dashboard > Settings > Environment Variables`
     })
   }
 
@@ -68,10 +73,25 @@ export default defineEventHandler(async (event) => {
         .select()
         .single()
 
-      if (insertError) throw insertError
+      if (insertError) {
+        throw createError({
+          statusCode: 500,
+          statusMessage: `Failed to create default EA control: ${insertError.message}. Make sure the 'ea_control' table exists in Supabase.`
+        })
+      }
       eaControl = newControl
     } else if (error) {
-      throw error
+      // Handle different Supabase errors
+      if (error.code === '42P01') {
+        throw createError({
+          statusCode: 500,
+          statusMessage: `Table 'ea_control' does not exist. Please run the migration SQL in Supabase.`
+        })
+      }
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Supabase error: ${error.message || 'Unknown error'}`
+      })
     }
 
     return {
@@ -93,9 +113,15 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (error: any) {
+    // Jika error sudah berupa createError, re-throw as is
+    if (error.statusCode) {
+      throw error
+    }
+    
+    // Handle error yang belum di-wrap
     throw createError({
       statusCode: 500,
-      message: error.message || 'Internal server error'
+      statusMessage: error.message || 'Internal server error'
     })
   }
 })
