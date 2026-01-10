@@ -33,6 +33,7 @@
               <div class="text-2xl font-bold text-gray-900">
                 <span v-if="eaStatus === 'ON'" class="text-green-600 bg-green-100 px-3 py-1 rounded-lg">ON</span>
                 <span v-else-if="eaStatus === 'OFF'" class="text-red-600 bg-red-100 px-3 py-1 rounded-lg">OFF</span>
+                <span v-else-if="eaStatus === 'Error'" class="text-orange-600 bg-orange-100 px-3 py-1 rounded-lg">Error</span>
                 <span v-else class="text-gray-500">Loading...</span>
               </div>
             </div>
@@ -49,6 +50,27 @@
             </div>
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
               <i class="fas fa-calendar-alt text-white text-lg"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message Alert -->
+      <div v-if="errorMessage" class="bg-orange-50 border-l-4 border-orange-500 p-4 mb-6 rounded-r-lg">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-triangle text-orange-500"></i>
+          </div>
+          <div class="ml-3 flex-1">
+            <h3 class="text-sm font-semibold text-orange-800 mb-1">Configuration Error</h3>
+            <p class="text-sm text-orange-700">{{ errorMessage }}</p>
+            <div class="mt-2 text-xs text-orange-600">
+              <p><strong>Quick Fix:</strong></p>
+              <ol class="list-decimal list-inside ml-2 space-y-1">
+                <li>Go to Vercel Dashboard → Your Project → Settings → Environment Variables</li>
+                <li>Add <code class="bg-orange-100 px-1 rounded">SUPABASE_URL</code> and <code class="bg-orange-100 px-1 rounded">SUPABASE_ANON_KEY</code></li>
+                <li>Redeploy your project</li>
+              </ol>
             </div>
           </div>
         </div>
@@ -273,11 +295,13 @@ const apiToken = computed(() => config.apiToken || 'abc321Xyz')
 const eaStatus = ref<string>('')
 const scheduleStatus = ref<Record<string, string>>({})
 const loading = ref(false)
+const errorMessage = ref<string>('')
 const schedules = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'SX']
 
 const loadEAStatus = async () => {
   try {
     loading.value = true
+    errorMessage.value = ''
     
     // Use useFetch untuk Nuxt 3 (auto-refresh support)
     const { data: response, error } = await useFetch(`/api/control`, {
@@ -291,7 +315,17 @@ const loadEAStatus = async () => {
     })
     
     if (error.value) {
-      throw error.value
+      // Extract error message dari response
+      const errorData = error.value.data
+      if (errorData?.statusMessage) {
+        errorMessage.value = errorData.statusMessage
+      } else if (error.value.message) {
+        errorMessage.value = error.value.message
+      } else {
+        errorMessage.value = 'Failed to load EA status. Please check your Supabase configuration.'
+      }
+      eaStatus.value = 'Error'
+      return
     }
     
     if (response.value && response.value.status === 'success') {
@@ -308,10 +342,12 @@ const loadEAStatus = async () => {
         'S9': response.value.schedule_s9 || 'ON',
         'SX': response.value.schedule_sx || 'ON'
       }
+      errorMessage.value = '' // Clear error on success
       updateLastRefreshTime()
     }
   } catch (error: any) {
     console.error('Error loading EA status:', error)
+    errorMessage.value = error.message || 'Failed to load EA status. Please check your configuration.'
     eaStatus.value = 'Error'
   } finally {
     loading.value = false
@@ -325,12 +361,26 @@ const updateLastRefreshTime = () => {
   }
 }
 
-// Auto refresh setiap 1 detik
+// Auto refresh setiap 10 detik (jangan terlalu sering untuk menghindari spam request)
+let refreshInterval: ReturnType<typeof setInterval> | null = null
+
 onMounted(() => {
   loadEAStatus()
-  setInterval(() => {
-    loadEAStatus()
-  }, 1000)
+  
+  // Start auto-refresh interval
+  refreshInterval = setInterval(() => {
+    // Only refresh if no error (stop spamming on error)
+    if (!errorMessage.value) {
+      loadEAStatus()
+    }
+  }, 10000) // 10 detik
+})
+
+onUnmounted(() => {
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+    refreshInterval = null
+  }
 })
 </script>
 
