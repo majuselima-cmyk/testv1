@@ -26,8 +26,18 @@ export default defineEventHandler(async (event) => {
 
   // Create Supabase client untuk server-side
   const { createClient } = await import('@supabase/supabase-js')
-  const supabaseUrl = config.public.supabaseUrl
-  const supabaseAnonKey = config.public.supabaseAnonKey
+  
+  // Debug: Check process.env directly (will be visible in Vercel function logs)
+  console.log('=== ENVIRONMENT VARIABLES DEBUG ===')
+  console.log('process.env.SUPABASE_URL:', process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 50) + '...' : 'MISSING')
+  console.log('process.env.SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY ? process.env.SUPABASE_ANON_KEY.substring(0, 30) + '...' : 'MISSING')
+  console.log('config.public.supabaseUrl:', config.public.supabaseUrl ? config.public.supabaseUrl.substring(0, 50) + '...' : 'MISSING')
+  console.log('config.public.supabaseAnonKey:', config.public.supabaseAnonKey ? config.public.supabaseAnonKey.substring(0, 30) + '...' : 'MISSING')
+  console.log('===================================')
+  
+  // Try to use process.env directly first, fallback to config
+  const supabaseUrl = process.env.SUPABASE_URL || config.public.supabaseUrl || ''
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || config.public.supabaseAnonKey || ''
   
   // Debug: Log configuration status (will be visible in Vercel function logs)
   console.log('Supabase Config Check:', {
