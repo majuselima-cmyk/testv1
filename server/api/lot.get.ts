@@ -1,18 +1,5 @@
 // API route untuk lot.php - Get lot size per schedule
-import { createClient } from '@supabase/supabase-js'
 import { calculateLotIndexFromLast15Trades, getActiveLotsPerSchedule, getSchedulePatterns } from '~/server/utils/trading'
-
-// Helper untuk create Supabase client di server
-function createSupabaseClient(config: any) {
-  const supabaseUrl = config.public.supabaseUrl
-  const supabaseAnonKey = config.public.supabaseAnonKey
-  
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Missing Supabase configuration')
-  }
-
-  return createClient(supabaseUrl, supabaseAnonKey)
-}
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -43,7 +30,18 @@ export default defineEventHandler(async (event) => {
   }
 
   // Create Supabase client untuk server-side
-  const supabase = createSupabaseClient(config)
+  const { createClient } = await import('@supabase/supabase-js')
+  const supabaseUrl = config.public.supabaseUrl
+  const supabaseAnonKey = config.public.supabaseAnonKey
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw createError({
+      statusCode: 500,
+      message: 'Missing Supabase configuration'
+    })
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
   try {
     // Get lot sizes dari database
