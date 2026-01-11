@@ -69,13 +69,14 @@ export default defineEventHandler(async (event) => {
 
     // Calculate lot index untuk schedule yang diminta
     const currentIndex = await calculateLotIndexFromLast15Trades(
+      supabase,
       account,
       schedule.toUpperCase(),
       lotSizes
     )
 
     // Get active lots untuk semua schedule
-    const activeLotsPerSchedule = await getActiveLotsPerSchedule(account, lotSizes)
+    const activeLotsPerSchedule = await getActiveLotsPerSchedule(supabase, account, lotSizes)
 
     // Get last trade untuk schedule ini
     const patterns = getSchedulePatterns(schedule.toUpperCase())
